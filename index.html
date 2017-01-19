@@ -297,8 +297,9 @@ function retryProcess(){
                         <h2>Closures</h2>
                         <pre><code class="hljs" data-trim contenteditable>
 function someClosure(a){
+    var x = 2;
     return function (b){
-        return a + b; // a == 10
+        return x + a + b; // a == 10
     }
 }
 var add = someClosure(10);
