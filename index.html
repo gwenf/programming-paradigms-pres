@@ -1,0 +1,482 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <title>reveal.js</title>
+
+        <link rel="stylesheet" href="css/reveal.css">
+        <link rel="stylesheet" href="css/theme/black.css">
+
+        <!-- Theme used for syntax highlighting of code -->
+        <link rel="stylesheet" href="lib/css/zenburn.css">
+
+        <!-- Printing and PDF exports -->
+        <script>
+            var link = document.createElement( 'link' );
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+            document.getElementsByTagName( 'head' )[0].appendChild( link );
+        </script>
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section>
+                    <h3>Programming Paradigms in Javascript</h3>
+                </section>
+                <section>
+                    <section>
+                        <h3>Why am I interested in paradigms?</h3>
+
+                    </section>
+                    <section>
+                        <img style='height: 400px;' src='images/me-and-bob.jpg'>
+                        <h3>"The ratio of time spent reading (code) versus writing is well over 10 to 1."</h3>
+                        <p style='color: #ccc'>- Robert C. Martin</p>
+
+                    </section>
+                </section>
+                <section>
+                    <h2>What is a programming paradigm?</h2>
+                    <ul>
+                        <li>A Model/Style for Programming</li>
+                        <li>Generally intended to help with:
+                            <ul>
+                                <li>code organization</li>
+                                <li>reusability</li>
+                                <li>testing</li>
+                                <li>memory considerations</li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                </section>
+                <section>
+                    <h2>Types of Paradigms in Javascript</h2>
+                    <ul>
+                        <li>Imperative (Proceedural)</li>
+                        <li>Functional (FP)</li>
+                        <li>Object Oriented (OOP)</li>
+                    </ul>
+
+                </section>
+                <section>
+                    <section>
+                        <h2>Imperative</h2>
+                        <p>(Proceedural)</p>
+                        <p>Line by line execution</p>
+                        <pre><code class="hljs" data-trim contenteditable>
+var start = Date.now() + '';
+var fs = require('fs-extra');
+var execSync = require('child_process').execSync;
+
+var build = '../scout-app-build/win32/Scout-App/';
+var bowerJSON = fs.readJsonSync('bower.json');
+var manifest = fs.readJsonSync('package.json');
+delete manifest.devDependencies;
+
+// Clean build folder
+fs.removeSync(build + 'License');
+fs.removeSync(build + 'bower_components');
+fs.removeSync(build + 'node_modules');
+var timeClean = Date.now() + '';
+console.log('Cleaning build folder - ' + timer(timeClean, start));
+
+// Copy files over
+fs.writeJsonSync(build + 'package.json', manifest);
+fs.writeJsonSync(build + 'bower.json', bowerJSON);
+fs.copySync('scout-files/index.html', build + 'scout-files/index.html');
+
+// Zip package
+var zipExe = 'node_modules/7zip-bin-win/' + process.arch + '/7za.exe';
+var buildInput = '../scout-app-build/win32/Scout-App';
+var outputZip = '../scout-app-build/WIN_Scout-App_' + manifest.version + '.zip';
+fs.removeSync(outputZip);
+execSync(zipExe + ' a -bd -tzip -mx=9 -y ' + outputZip + ' ' + buildInput);
+var timeZip = Date.now() + '';
+console.log('Zipped Package        - ' + timer(timeZip, timeNS));
+
+// Total Time
+var end = Date.now() + '';
+console.log('-------------------------------------');
+console.log('Total Build Time      - ' + timer(end, start)
+                        </code></pre>
+                    </section>
+                    <section>
+                        <h2>Advantages with Imperative:</h2>
+                        <ul>
+                            <li>Easy to Start With</li>
+                            <li>Easy to Reason About</li>
+                            <li>Makes sense for small projects</li>
+                        </ul>
+
+                    </section>
+                    <section>
+                        <h2>Problems with Imperative:</h2>
+                        <ul>
+                            <li>Hard to Read, Maintain</li>
+                            <li>Easy to make memory errors</li>
+                            <li>Unit Testing is Impractical</li>
+                        </ul>
+                    </section>
+                </section>
+                <section>
+                    <section>
+                        <h2>Functional</h2>
+                    </section>
+                    <section>
+                        <h2>Functional Characteristics:</h2>
+                        <ul>
+                            <li>Function composition</li>
+                            <li>Immutability - Don't mutate state</li>
+                            <li>Pure functions - No side effects</li>
+                            <li>Recursion/Tail Calls</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>Pure Functions</h2>
+                        <ul>
+                            <li>Given the same inputs, always returns the same output</li>
+                            <li>Has no side-effects</li>
+                        </ul>
+                        <pre><code class="hljs" data-trim contenteditable>
+Pure Function:
+
+function doSomething(val){
+    var newVal = val + 10;
+    return newVal;
+}
+________________________________________________________
+Impure Function:
+
+var x = 10;
+function doSomething(){
+    x = x + 10;
+    console.log("testing")
+}
+                        </code></pre>
+                    </section>
+                    <section>
+                        <h2>Higher Order Functions</h2>
+                        <pre><code class="hljs" data-trim contenteditable>
+function isBigEnough(value) {
+  return value >= 10;
+}
+
+[12, 5, 8, 130, 44].filter(isBigEnough);
+                        </code></pre>
+                    </section>
+                    <section>
+                        <h3>"The first rule of functions is that they should be small."</h3>
+                        <p style='color: #ccc'>- Robert C. Martin</p>
+                    </section>
+                    <section>
+                        <h2>Function composition</h2>
+                        <pre><code class="hljs" data-trim contenteditable>
+function sum(x, y){
+    return x + y;
+}
+function mult(x, y){
+    return x * y;
+}
+function multAndSum(x, y, z){
+    return sum(mult(x, y), z);
+}
+sum(mult(3, 4), 5);
+multAndSum(3,4,5)
+                        </code></pre>
+                    </section>
+                    <section>
+                        <h2>Avoid mutating state</h2>
+                        <pre><code class="hljs" data-trim contenteditable>
+var state = { name: "Bob", age: 26 };
+function updateClient(state, action){
+    switch (action.type) {
+        case 'UPDATE_NAME':
+            return {
+                ...state,
+                name: action.name
+            }
+        case 'UPDATE_AGE':
+            return {
+                ...state,
+                age: action.age
+            }
+    };
+};
+updateClient(state, {type: 'UPDATE_NAME', name: "Carl"})
+                        </code></pre>
+                    </section>
+                    <section>
+                        <h2>Avoid mutating state, cont...</h2>
+                        <pre><code class="hljs" data-trim contenteditable>
+const a = 10;
+a = 11; //error
+
+const arr = [1, 2, 3];
+arr[0] = 5; //No error
+
+var b = Object.freeze([10, 11, 12]);
+b[0] = 13; //error
+
+var c = {};
+Object.defineProperty( c, "name", {
+  value: "Gwen",
+  writable: false
+});
+c.name = "Rose"; //error
+                        </code></pre>
+                    </section>
+                    <section>
+                        <img style='height: 600px;' src='images/todo.png'>
+                    </section>
+                    <section>
+                        <img style='height: 600px;' src='images/time-travel.gif'> <!-- I really need a better gif -->
+                    </section>
+                    <section>
+                        <h2>Memoization/Caching</h2>
+                        <pre><code class="hljs" data-trim contenteditable>
+function expensiveFunction(n){
+  var x = 2;
+  var y = 3;
+  var z = 0;
+  for (var i = 0; i < n; i++){
+    for (var j = 0; j < n; j++){
+      z = x * y;
+    }
+  }
+  return z + n;
+}
+
+function cacheSomething(funct){
+  return function innerFcn(n){
+    if (!localStorage.getItem(n)){
+      localStorage.setItem(n, funct(n));
+    }
+    return localStorage.getItem(n);
+  }
+}
+                        </code></pre>
+                        <a href='http://codepen.io/gwenf/pen/XpjMvQ?editors=0010' target='_blank'>Live Sample Code</a>
+
+                    </section>
+                    <section>
+                        <h2>Recursion</h2>
+                        <pre><code class="hljs" data-trim contenteditable>
+New Optimized Recursion:
+
+function countdown(value) {
+    if (value > 0) {
+        console.log(value);
+        return countdown(value - 1);
+    } else {
+        return value;
+    }
+};
+countdown(10);
+______________________________________________
+Not Optimized:
+
+function retryProcess(){
+    processFiles()
+        .then(function(val){
+            console.log('success');
+        })
+        .catch(function(err){
+            console.log("error: " + err)
+            retryProcess();
+        })
+}
+                        </code></pre>
+
+                    </section>
+                    <section>
+                        <h2>Closures</h2>
+                        <pre><code class="hljs" data-trim contenteditable>
+function someClosure(a){
+    return function (b){
+        return a + b; // a == 10
+    }
+}
+var add = someClosure(10);
+add(5); // 15
+                        </code></pre>
+
+                    </section>
+                    <section>
+                        <h2>Advantages with Functional:</h2>
+                        <ul>
+                            <li>Multi-Core Friendly</li>
+                            <li>Easy to Reason About</li>
+                            <li>Easier Navigation through Code</li>
+                            <li>Debugging/Testing</li>
+
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>Problems with Functional:</h2>
+                        <ul>
+                            <li>Can use more memory</li>
+                            <li>Performance can take a little bit of a hit</li>
+                            <li>Learning curve can be a bit steeper</li>
+                        </ul>
+
+                    </section>
+                </section>
+                <section>
+                    <section>
+                        <h2>Object Oriented</h2>
+
+                    </section>
+                    <section>
+                        <pre><code class="hljs" data-trim contenteditable>
+typeof /s/ === 'object'
+Function instanceof Object
+Error instanceof Object
+typeof new Date() === 'object'
+typeof [] === 'object'
+                        </code></pre>
+
+                    </section>
+                    <section>
+                        <h2>OOP Characteristics:</h2>
+                        <ul>
+                            <li>Inheritance</li>
+                            <li>Encapsulation</li>
+                            <li>Polymorphism</li>
+
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>Inheritance Example</h2>
+                        <pre><code class="hljs" data-trim contenteditable>
+function Rectangle(length, width){
+  this.length = length;
+  this.width = width;
+}
+Rectangle.prototype.getArea = function(){
+  return this.length * this.width;
+}
+Rectangle.prototype.toString = function(){
+  return `[Rectangle ${this.length} x ${this.width}]`;
+}
+
+function Square(size){
+  this.length = size;
+  this.width = size;
+}
+Square.prototype = new Rectangle();
+
+Square.prototype.toString = function(){
+  return `[Square ${this.length} x ${this.width}]`;
+}
+
+var square = new Square(20);
+var rect = new Rectangle(10, 5);
+
+square.getArea() // 400
+rect.getArea() // 50
+                        </code></pre>
+
+                    </section>
+                    <section>
+                        <h2>ES2015 Classes</h2>
+                        <pre><code class="hljs" data-trim contenteditable>
+class Rectangle {
+    constructor(length, width){
+        this.length = length;
+        this.width = width;
+    }
+    getArea(){
+        return this.length * this.width;
+    }
+}
+class Square extends Rectangle {
+    constructor(size){
+        super();
+        this.length = size;
+        this.width = size;
+    }
+}
+var rect = new Rectangle(10, 5);
+var square = new Square(10);
+                        </code></pre>
+
+                    </section>
+                    <section>
+                        <h2>Game Time!</h2>
+
+                    </section>
+                </section>
+                <section>
+                    <section>
+                        <h2>OOP with FP</h2>
+                        <image style='height: 400px' src='images/working-together.png'>
+
+                    </section>
+                </section>
+                <section>
+                    <h2>What about frameworks?</h2>
+                    <ul>
+                        <li><a href='https://medium.com/@housecor/react-stateless-functional-components-nine-wins-you-might-have-overlooked-997b0d933dbc#.bwpuicaxp'>React - Stateless Functional Components</a></li>
+                        <li><a href='https://github.com/lauripiispanen/angular-bacon'>Angular-Bacon</a></li>
+                        <li><a href='https://www.npmjs.com/package/angular-oop'>OOP for Angular</a></li>
+                    </ul>
+
+                </section>
+                <section>
+                    <div>
+                        <div>
+                            <h3>Resource Links</h3>
+                            <ul style='font-size: 28px'>
+                                <li>Book - <a href='https://www.amazon.com/Principles-Object-Oriented-JavaScript-Nicholas-Zakas/dp/1593275404'>The Principles of Object Oriented JavaScript</a></li>
+                                <li>Videos - <a href='https://www.youtube.com/playlist?list=PL9D558D49CA734A02'>Programming Paradigms Video Series</a> by Stanford</li>
+                                <li><a href='https://baconjs.github.io/'>Bacon.js</a> - A functional reactive library for JS.</li>
+                                <li><a href='https://github.com/stoeffel/awesome-fp-js'>Awesome Functional Programming Resources</a> - Javascript</li>
+                                <li><a target='_blank' href='https://gist.github.com/staltz/868e7e9bc2a7b8c1f754'>Description of Functional Reactive Programming</a></li>
+                                <li><a href='https://github.com/gwenf/regex-breakfast'>Regex Breakfast</a> - By Me</li>
+                            </ul>
+                        </div>
+                        <div style='margin-top: 50px'>
+                            <h3>People to Follow</h3>
+                            <ul style='font-size: 28px'>
+                                <li>Rich Hickey - Creator of Clojure</li>
+                                <li>Robert C. Martin - Author of "Clean Code"</li>
+                                <li>Kyle Simpson - Opinionated JS Expert</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+                <section>
+                    <h2>Gwen Faraday</h2>
+                    <ul>
+                        <li>Developer at Ion Three</li>
+                        <li><a href='https://github.com/gwenf'>github.com/gwenf</a></li>
+                        <li><a href='https://twitter.com/gwen_faraday'>@gwen_faraday</a></li>
+                        <li>gwenfaraday@gmail.com</li>
+                    </ul>
+
+                </section>
+            </div>
+        </div>
+
+        <script src="lib/js/head.min.js"></script>
+        <script src="js/reveal.js"></script>
+
+        <script>
+            Reveal.initialize({
+                history: true,
+
+                dependencies: [
+                    { src: 'plugin/markdown/marked.js' },
+                    { src: 'plugin/markdown/markdown.js' },
+                    { src: 'plugin/notes/notes.js', async: true },
+                    { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+                ]
+            });
+        </script>
+    </body>
+</html>
